@@ -10,6 +10,11 @@ public class SerialConf {
 	public static final String PORT_NAME = "COM3";
 	
 	/**
+	 * 串口名称
+	 */
+	public static final String PORT_NAMEMAC = "/dev/tty.SOC";
+	
+	/**
 	 * 询问 pelicano 是否在线
 	 */
 	public static final String POLL = "020001FEFF";

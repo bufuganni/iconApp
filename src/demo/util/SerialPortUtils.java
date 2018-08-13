@@ -3,8 +3,11 @@ package demo.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
+import demo.conf.SerialConf;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
@@ -16,6 +19,8 @@ import gnu.io.UnsupportedCommOperationException;
 public class SerialPortUtils {
 
 	private static SerialPortUtils serialPortUtils = null;
+	private static  SerialPort serialPort = null;
+
 
 	static {
 		// 在该类被ClassLoader加载时就初始化一个serialPortUtils对象
@@ -42,6 +47,49 @@ public class SerialPortUtils {
 
 	}
 
+	
+
+	/**
+	 * 获取提供服务的SerialPort 对象
+	 * 
+	 * @return SerialPort
+	 */
+	public static SerialPort getSerialPort() {
+		if (serialPort == null) {
+			try {
+				serialPort = SerialPortUtils.openPort(SerialConf.PORT_NAME);
+			} catch (NoSuchPortException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (PortInUseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return serialPort;
+
+	}
+	
+	/**
+	 * 查找所有可用端口
+	 * @return 可用端口名称列表
+	 */
+	public static final ArrayList<String> findPort() {
+
+		//获得当前所有可用串口
+        Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();	
+        
+        ArrayList<String> portNameList = new ArrayList();
+
+        //将可用串口名添加到List并返回该List
+        while (portList.hasMoreElements()) {
+            String portName = portList.nextElement().getName();
+            portNameList.add(portName);
+        }
+
+        return portNameList;
+
+    }
 	/**
 	 * 
 	 * @param portName
@@ -59,7 +107,6 @@ public class SerialPortUtils {
 		// 通过端口名识别端口
 		CommPortIdentifier portIdentifier = CommPortIdentifier
 				.getPortIdentifier(portName);
-		SerialPort serialPort = null;
 		// 打开端口，并给端口名字和一个timeout（打开操作的超时时间）
 		CommPort commPort = portIdentifier.open(portName, 2000);
 
